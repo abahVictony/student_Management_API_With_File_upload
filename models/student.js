@@ -38,16 +38,20 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       profileImage: {
+        allowNull: true,
         type: DataTypes.STRING,
       },
       galleryImages: {
+        allowNull: true,
         type: DataTypes.JSON,
         defaultValue: []
       },
       passportImage: {
+        allowNull: true,
         type: DataTypes.STRING,
       },
       identityCardImage: {
+        allowNull: true,
         type: DataTypes.STRING,
       },
       createdAt: {
