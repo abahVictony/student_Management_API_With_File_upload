@@ -1,35 +1,44 @@
 const { Student } = require('../models')
 const fs = require('fs')
 
-exports.newStudent = async(req, res) =>{
-   try {
-    const {fullName, email, phoneNo, department} = req.body
-    const file = req.file.path
-    const filePath = req.files.map((e)=> e.path)
-
-    const data = {
-        fullName,
-        email,
-        phoneNo,
-        department,
-        profileImage: file,
-        galleryImages: filePath,
-        passportImage: file,
-        identityCardImage: file
+const getImage = (file) => {
+    if (file) {
+        return file[0].path;
+    } else {
+        return null;
     }
+};
 
-    const student = await Student.create(data)
-    
-    res.status(201).json({
-        message: `Student Created Successfully`,
-        data: student
-    })
-   } catch (error) {
-    res.status(500).json({
-        error: error.message
-    })
-   }
-}
+exports.newStudent = async (req, res) => {
+    try {
+        const { fullName, email, phoneNo, department } = req.body;
+
+        const files = req.files || {};
+
+        const data = {
+            fullName,
+            email,
+            phoneNo,
+            department,
+
+            profileImage: getImage(files.profileImage),
+            passportImage: getImage(files.passportImage),
+            identityCardImage: getImage(files.identityCardImage),
+        };
+
+        const student = await Student.create(data);
+
+        res.status(201).json({
+            message: 'Student Created Successfully',
+            data: student
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            error: error.message
+        });
+    }
+};
 
 exports.getAllStudents = async(req, res) =>{
    try {
@@ -88,7 +97,7 @@ exports.updateStudent = async (req, res) => {
             phoneNo
         }
 
-        const updatedStudent = await Student.update(data)
+        const updatedStudent = await student.update(data)
 
         res.status(200).json({
             message: "Student Updated",
@@ -113,7 +122,7 @@ exports.deleteStudent = async (req, res) => {
     }
     
     if (student.profileImage ) {
-        const oldFilePath = student.ProfileImage;
+        const oldFilePath = student.profileImage;
         fs.unlinkSync(oldFilePath);
     }
 
@@ -133,10 +142,10 @@ exports.deleteStudent = async (req, res) => {
     });
 }
 
-    await product.destroy();
+    await student.destroy();
 
     res.status(200).json({ 
-        message: 'product deleted' 
+        message: 'Student deleted' 
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
